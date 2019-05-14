@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
-public class Contacts {
+public class Contact {
 	
 	String name;
 	
@@ -23,15 +23,17 @@ public class Contacts {
 	String email;
 
 	
-	public Contacts(@Valid String name, @Valid int phoneNumber, @Valid String email) {
-
+	public Contact( String name, int phoneNumber,  String email) {
+       super();
 		
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 	}
 
-	public Contacts() {}
+	public Contact() {
+		super();
+	}
 
 	public String getName() {
 		return name;

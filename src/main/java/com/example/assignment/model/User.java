@@ -2,8 +2,12 @@ package com.example.assignment.model;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
@@ -12,33 +16,42 @@ import com.fasterxml.jackson.annotation.JsonIgnoreType;
 @JsonIgnoreType()
 public class User {
 	
-	String name;
+	@Valid
+	@Indexed(unique=true)
+	private String name;
 	@Id
 	String id;
-	
-	User(){};
-	
-	public List<Device> device;
-	
+	@Field
+	@Indexed(unique=true)
+	private List<Device> device;
 	
 	
-	public User(String name, List<Device> device) {
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<Device> getDevice() {
+		return device;
+	}
+
+	public void setDevice(List<Device> device) {
+		this.device = device;
+	}
+
+	User(){}
+
+	public User(@Valid String name, List<Device> device) {
 		super();
 		this.name = name;
 		this.device = device;
-	}
+	};
 	
-	public String getUser() {
-		return name;
-	}
-	public void setUser(String user) {
-		name = user;
-	}
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
+	
+	
+	
 
 }
