@@ -27,7 +27,16 @@ public class MongoDBConfig {
 		userRepo.save(new User("suman",Arrays.asList(new Device("Android","192.168.146.78",
 			Arrays.asList
 			(new Contact("sam",8999,"a@gmail.com"),
-					(new Contact("sal",8996,"b@gmail.com")))))));
+					(new Contact("sal",8996,"b@gmail.com")))),new Device("Lenovo","192.168.146.78",
+							Arrays.asList
+							(new Contact("same",8999,"a@gmail.com"),
+									(new Contact("sali",8996,"b@gmail.com")))),new Device("Symbion","192.168.146.78",
+											Arrays.asList
+											(new Contact("sam",8999,"a@gmail.com"),
+													(new Contact("sal",8996,"b@gmail.com")))),new Device("Hp","192.168.146.78",
+															Arrays.asList
+															(new Contact("same",8999,"a@gmail.com"),
+																	(new Contact("sali",8996,"b@gmail.com")))))));
 		//contactrepo.save(new Contacts("Sam",  2000, "ab.game@gmail.com",Arrays.asList(new Device("Android","192.168.146.78"),new Device("Iphone","192.168.146.77"))));
 		};
 	}

@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.assignment.model.Contact;
 import com.example.assignment.model.Device;
 import com.example.assignment.model.User;
+import com.example.assignment.repo.ImportExportService;
 import com.example.assignment.repo.UserRepo;
 import com.example.assignment.repo.UserRepoImpl;
+import com.mongodb.client.result.UpdateResult;
 
 
 @RestController
@@ -78,6 +80,9 @@ public class Controller {
 
 	@Autowired
 	UserRepoImpl userRepoImpl;
+	@Autowired
+	
+	ImportExportService importExport;
 	
 	/*@Autowired
 	ImportExportService importExport;*/
@@ -125,4 +130,36 @@ public class Controller {
 		return userRepoImpl.syncContactByDeviceName(userName, deviceName);
 
 	}
+	@DeleteMapping("/delete/{name}/{deviceName}/contactName")
+	public Device deleteUserDetails(@PathVariable("name") String userName, @PathVariable("deviceName") String deviceName,
+			@PathVariable("contactName") String contactName	) {
+
+		return
+		userRepoImpl.deleteContactByDeviceAndName(userName, deviceName, contactName);
+	}
+	
+	@DeleteMapping("/delete/{name}/{deviceName}")
+	public List<Device> deleteDeviceByDeviceName(@PathVariable("name") String userName, @PathVariable("deviceName") String deviceName
+		) {
+
+		return
+		userRepoImpl.deleteDeviceByDeviceName(userName, deviceName);
+	}
+
+	@GetMapping("/exportAllContactsByDevice/{userName}/{deviceName}")
+	public String ExportContactByName(@PathVariable("userName") String userName, @PathVariable("deviceName") String deviceName
+		) {
+
+		return
+		importExport.exportToFile( userName, deviceName);
+	}
+
+	@GetMapping("/importtAllContactsByDevice/{filePath}/{userName}/{deviceName}")
+	public Device importContactByName(@PathVariable("filePath") String fileName,  @PathVariable("userName") String userName, @PathVariable("deviceName") String deviceName
+		) {
+
+		return
+		importExport.importFromFile(fileName, userName, deviceName);
+	}
+	
 }

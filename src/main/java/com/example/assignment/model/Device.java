@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 public class Device {
 
+	
 	private String name;
 	private String IP;
 

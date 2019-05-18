@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -16,11 +18,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreType;
 @JsonIgnoreType()
 public class User {
 	
+	
+	@Id
+	private ObjectId id;
+	
 	@Valid
 	@Indexed(unique=true)
 	private String name;
-	@Id
-	String id;
+	
+	
 	@Field
 	@Indexed(unique=true)
 	private List<Device> device;
@@ -51,7 +57,14 @@ public class User {
 	};
 	
 	
-	
+	public ObjectId getId() {
+		return id;
+	}
+
+	public void setId(ObjectId id) {
+		this.id = id;
+	}
+
 	
 
 }

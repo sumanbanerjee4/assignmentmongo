@@ -13,6 +13,6 @@ public interface UserRepo extends MongoRepository<User, String>, UserRepoCustom{
 
 	
 	
-	@Query("{'$and':[{'name':?0},{'Device.name': ?1}]}")
-	public  User findAllContactsByDevice(String userName,String deviceName);
+	/*@Query("{'$and':[{'name':?0},{'Device.name': ?1}]}")
+	public  User findAllContactsByDevice(String userName,String deviceName);*/
 }

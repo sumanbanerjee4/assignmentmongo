@@ -1,12 +1,13 @@
 package com.example.assignment.repo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.Comparator.comparing;
 import java.util.List;
 import java.util.TreeSet;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,6 +15,9 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+//import org.springframework.data.mongodb.core.query.Criteria;
+//import org.springframework.data.mongodb.core.query.Query;
+//import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
@@ -25,7 +29,10 @@ public class UserRepoImpl implements UserRepoCustom {
 
 	@Autowired
 	UserRepo userRepo;
-
+    
+	@Autowired
+	MongoOperations mongoOperation;
+	
 	private final MongoTemplate mongoTemplate;
 
 	@Autowired
@@ -33,6 +40,25 @@ public class UserRepoImpl implements UserRepoCustom {
 		this.mongoTemplate = mongoTemplate;
 	}
 
+	public Device deleteContactByDeviceAndName(String userName, String deviceName, String contactName){
+		Query select = Query.query(new Criteria().andOperator(Criteria.where("name").is(userName),
+				Criteria.where("device.name").is(deviceName)));
+		Update update = new Update();
+		update.pull("device.$.contact", Collections.singletonMap("name", "contactName"));
+		mongoTemplate.findAndModify(select, update, User.class);
+		return listContactByUserAndDevice(userName , deviceName);
+		
+	}
+	
+	public List <Device> deleteDeviceByDeviceName(String userName, String deviceName){
+		Query select = Query.query( Criteria.where("name").is("userName"));
+				
+		Update update = new Update();
+		update.pull("device", Collections.singletonMap("name", "deviceName"));
+		mongoTemplate.findAndModify(select, update, User.class);
+		return findListOfDeviceByUser(userName );
+}
+	
 	public Device listContactByUserAndDevice(String userName, String deviceName) {
 
 		List<AggregationOperation> list = new ArrayList<AggregationOperation>();
@@ -70,10 +96,11 @@ public class UserRepoImpl implements UserRepoCustom {
 		oldContacts.add(c);
 		List<Contact> unique = oldContacts.stream().collect(
 				collectingAndThen(toCollection(() -> new TreeSet<>(comparing(Contact::getName))), ArrayList::new));
-		Query select = Query.query(new Criteria().andOperator(Criteria.where("name").is("userName"),
+		Query select = Query.query(new Criteria().andOperator(Criteria.where("name").is(userName),
 				Criteria.where("device.name").is(deviceName)));
 		Update update = new Update();
 		update.set("device.$.contact", unique);
+		
 		mongoTemplate.findAndModify(select, update, User.class);
 		return listContactByUserAndDevice(userName , deviceName);
 
@@ -85,18 +112,22 @@ public class UserRepoImpl implements UserRepoCustom {
 
 	public Device syncContactByDeviceName(String userName, String deviceName) {
 		List<Device> devices = findListOfDeviceByUser(userName);
+		
 		List<Contact> c = new ArrayList<>();
 		for (Device d : devices) {
+			System.out.println(d.getName());
 			c.addAll(d.getContact());
 		}
 
 		List<Contact> unique = c.stream().collect(
 				collectingAndThen(toCollection(() -> new TreeSet<>(comparing(Contact::getName))), ArrayList::new));
-		Query select = Query.query(new Criteria().andOperator(Criteria.where("name").is("userName"),
+		Query q = Query.query(new Criteria().andOperator(Criteria.where("name").is(userName),
 				Criteria.where("device.name").is(deviceName)));
+		unique.stream().forEach(i->System.out.println(i.getName()));
 		Update update = new Update();
 		update.set("device.$.contact", unique);
-		mongoTemplate.findAndModify(select, update, User.class);
+		System.out.println(mongoTemplate.findAndModify(q, update, User.class));
+		mongoTemplate.findAndModify(q, new Update().set("device.$.contact", unique), User.class);
 		return listContactByUserAndDevice(userName, deviceName);
 
 	}
